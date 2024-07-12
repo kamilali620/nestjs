@@ -13,11 +13,49 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  MANAGER
+  USER
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  email        String        @unique
+  role         Role          @default(USER)
+  password     String
+  is_active    Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user_details UserDetails[]
+  address      Address[]
+
+  @@map("user")
+}
+
+model UserDetails {
+  id         Int      @id @default(autoincrement())
+  first_name String
+  last_name  String
+  phone      String   @default("")
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("user_details")
+}
+
+model Address {
+  id         Int     @id @default(autoincrement())
+  street     String  @default("")
+  city       String  @default("")
+  state      String  @default("")
+  zip        String  @default("")
+  country    String  @default("")
+  is_primary Boolean @default(false)
+  is_billing Boolean @default(false)
+  user_id    Int
+  user       User    @relation(fields: [user_id], references: [id])
 }
