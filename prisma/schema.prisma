@@ -58,4 +58,6 @@ model Address {
   is_billing Boolean @default(false)
   user_id    Int
   user       User    @relation(fields: [user_id], references: [id])
+
+  @@map("address")
 }
